@@ -1,9 +1,11 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
-import { Button } from '@/components/ui/button' // Corrected import path for Button
-import { UpdateCard } from '@/components/UpdateCard' // New: Imported UpdateCard
+import { Button } from '@/components/ui/button'
+import { UpdateCard } from '@/components/UpdateCard'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 const data = [
   { name: 'Jan', revenue: 4000, expenses: 2400 },
@@ -21,17 +23,40 @@ const pieData = [
   { name: 'Compliance', value: 300 },
   { name: 'Marketing', value: 200 },
 ];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']; // Example colors for pie chart
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-const updates = [
-  { title: "New Client Onboarding", description: "Onboarding for 'Smith & Co.' completed successfully.", date: "2023-01-15", link: "#" },
-  { title: "Q3 Financial Report Due", description: "Upcoming deadline for Q3 Financial Report submission.", date: "2023-01-20", link: "#" },
-  { title: "Regulatory Changes Alert", description: "Identified upcoming changes in California tax law.", date: "2023-01-18", link: "#" },
-  { title: "Automated Invoice Sent", description: "Invoice #2023005 sent to 'Alpha Holdings.'", date: "2023-01-14", link: "#" },
-];
-
+interface UpdateItem {
+  id: string;
+  title: string;
+  content: string;
+  published_at: string;
+  author_id: string | null;
+}
 
 export default function DashboardPage() {
+  const [updates, setUpdates] = useState<UpdateItem[]>([])
+  const [loadingUpdates, setLoadingUpdates] = useState(true)
+  const [updatesError, setUpdatesError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function loadUpdates() {
+      try {
+        const response = await fetch('/mock-updates.json')
+        if (!response.ok) {
+          throw new Error(`Failed to load mock updates: ${response.statusText}`)
+        }
+        const data: UpdateItem[] = await response.json()
+        setUpdates(data)
+      } catch (error: any) {
+        setUpdatesError(error.message)
+        console.error("Error loading mock updates:", error)
+      } finally {
+        setLoadingUpdates(false)
+      }
+    }
+    loadUpdates()
+  }, [])
+
   return (
     <div className="container mx-auto p-8">
       <motion.h1
@@ -51,8 +76,8 @@ export default function DashboardPage() {
           className="bg-card p-6 rounded-lg shadow-md border"
         >
           <h2 className="text-xl font-semibold mb-4">Total Revenue</h2>
-          <p className="text-3xl font-bold text-primary">$12,450</p>
-          <p className="text-sm text-muted-foreground mt-2">+12% from last month</p>
+          <p className="text-3xl font-bold text-primary" aria-label="Total Revenue: $12,450">$12,450</p>
+          <p className="text-sm text-muted-foreground mt-2" aria-label="12 percent increase from last month">+12% from last month</p>
         </motion.div>
 
         <motion.div
@@ -62,8 +87,8 @@ export default function DashboardPage() {
           className="bg-card p-6 rounded-lg shadow-md border"
         >
           <h2 className="text-xl font-semibold mb-4">Pending Invoices</h2>
-          <p className="text-3xl font-bold text-destructive">5</p>
-          <p className="text-sm text-muted-foreground mt-2">Totaling $3,200</p>
+          <p className="text-3xl font-bold text-destructive" aria-label="5 pending invoices">5</p>
+          <p className="text-sm text-muted-foreground mt-2" aria-label="Totaling $3,200">Totaling $3,200</p>
         </motion.div>
 
         <motion.div
@@ -73,8 +98,8 @@ export default function DashboardPage() {
           className="bg-card p-6 rounded-lg shadow-md border"
         >
           <h2 className="text-xl font-semibold mb-4">Compliance Score</h2>
-          <p className="text-3xl font-bold text-green-500">92%</p>
-          <p className="text-sm text-muted-foreground mt-2">Good standing</p>
+          <p className="text-3xl font-bold text-green-500" aria-label="Compliance Score: 92 percent">92%</p>
+          <p className="text-sm text-muted-foreground mt-2" aria-label="Good standing">Good standing</p>
         </motion.div>
       </div>
 
@@ -86,18 +111,18 @@ export default function DashboardPage() {
           className="bg-card p-6 rounded-lg shadow-md border"
         >
           <h2 className="text-xl font-semibold mb-4">Monthly Financial Overview</h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} aria-label="Monthly financial overview bar chart">
             <BarChart
               data={data}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="name" aria-label="Month" />
+              <YAxis aria-label="Amount" />
               <Tooltip />
               <Legend />
-              <Bar dataKey="revenue" fill="hsl(var(--primary))" />
-              <Bar dataKey="expenses" fill="hsl(var(--destructive))" />
+              <Bar dataKey="revenue" fill="hsl(var(--primary))" name="Revenue" />
+              <Bar dataKey="expenses" fill="hsl(var(--destructive))" name="Expenses" />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
@@ -109,7 +134,7 @@ export default function DashboardPage() {
           className="bg-card p-6 rounded-lg shadow-md border"
         >
           <h2 className="text-xl font-semibold mb-4">Expenses by Category</h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} aria-label="Expenses by category pie chart">
             <PieChart>
               <Pie
                 data={pieData}
@@ -122,7 +147,7 @@ export default function DashboardPage() {
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
               >
                 {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} aria-label={`Category ${entry.name}: ${entry.value}`} />
                 ))}
               </Pie>
               <Tooltip />
@@ -139,19 +164,25 @@ export default function DashboardPage() {
         className="bg-card p-6 rounded-lg shadow-md border"
       >
         <h2 className="text-xl font-semibold mb-4">Recent Activity & Updates</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {updates.map((update, index) => (
-            <UpdateCard
-              key={index}
-              title={update.title}
-              description={update.description}
-              date={update.date}
-              link={update.link}
-              delay={0.1 * index} // Staggered animation
-            />
-          ))}
-        </div>
-        <Button className="mt-6">View Full Report</Button>
+        {loadingUpdates ? (
+          <LoadingSpinner text="Loading updates..." />
+        ) : updatesError ? (
+          <p className="text-destructive" role="alert">Error loading updates: {updatesError}</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {updates.map((update, index) => (
+              <UpdateCard
+                key={update.id}
+                title={update.title}
+                description={update.content}
+                date={new Date(update.published_at).toLocaleDateString()}
+                link="#"
+                delay={0.1 * index}
+              />
+            ))}
+          </div>
+        )}
+        <Button className="mt-6" aria-label="View full report">View Full Report</Button>
       </motion.div>
     </div>
   )

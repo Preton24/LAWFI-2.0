@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils' // Corrected path to utils
+import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -17,8 +17,8 @@ export function Navbar() {
   ]
 
   return (
-    <nav className="flex items-center space-x-4 lg:space-x-6">
-      <Link href="/" className="mr-6 flex items-center space-x-2">
+    <nav className="flex items-center space-x-4 lg:space-x-6" aria-label="Main navigation">
+      <Link href="/" className="mr-6 flex items-center space-x-2" aria-label="Go to LAW-FI homepage">
         <span className="font-bold inline-block text-lg">LAW-FI</span>
       </Link>
       {navItems.map((item) => (
@@ -29,6 +29,8 @@ export function Navbar() {
             'text-sm font-medium transition-colors hover:text-primary',
             pathname === item.href ? 'text-primary' : 'text-muted-foreground'
           )}
+          aria-current={pathname === item.href ? 'page' : undefined}
+          aria-label={`Navigate to ${item.label} page`}
         >
           {item.label}
         </Link>

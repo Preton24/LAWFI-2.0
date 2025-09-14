@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button' // Corrected import path for Button
-import { Input } from '@/components/ui/input' // Corrected import path for Input
-import { CitedAnswer } from '@/components/CitedAnswer' // New: Imported CitedAnswer
-import { LoadingSpinner } from '@/components/LoadingSpinner' // New: Imported LoadingSpinner
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { CitedAnswer } from '@/components/CitedAnswer'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export default function SummarizePage() {
   const [file, setFile] = useState<File | null>(null)
@@ -41,7 +41,8 @@ export default function SummarizePage() {
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json()
@@ -78,13 +79,14 @@ export default function SummarizePage() {
             onChange={handleFileChange}
             accept=".pdf,.doc,.docx,.txt"
             className="flex-1 block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
+            aria-label="Upload document file"
           />
-          <Button onClick={handleSubmit} disabled={loading || !file}>
+          <Button onClick={handleSubmit} disabled={loading || !file} aria-label={loading ? 'Summarizing document' : 'Summarize document'}>
             {loading ? <LoadingSpinner size="sm" /> : 'Summarize'}
           </Button>
         </div>
-        {file && <p className="mt-2 text-sm text-muted-foreground">Selected: {file.name}</p>}
-        {error && <p className="mt-4 text-destructive text-sm">{error}</p>}
+        {file && <p className="mt-2 text-sm text-muted-foreground" aria-live="polite">Selected file: {file.name}</p>}
+        {error && <p className="mt-4 text-destructive text-sm" role="alert">{error}</p>}
       </motion.div>
 
       {summary && (
@@ -93,13 +95,12 @@ export default function SummarizePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          {/* Using CitedAnswer component for summary display */}
           <CitedAnswer
             answer={summary}
             citations={[
               { id: 'doc-source', text: `Source: ${file?.name || 'Uploaded Document'}`, url: '#' }
             ]}
-            confidence={95} // Example confidence
+            confidence={95}
           />
         </motion.div>
       )}

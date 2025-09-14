@@ -2,9 +2,8 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { EligibilityForm } from '@/components/EligibilityForm' // New: Imported EligibilityForm
+import { EligibilityForm } from '@/components/EligibilityForm'
 
-// Define the type for the form data if not already done in EligibilityForm component directly
 interface EligibilityFormData {
   income: number;
   familySize: number;

@@ -8,15 +8,13 @@ import { motion } from 'framer-motion'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-// If using shadcn/ui Form components, you would import them here:
-// import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 
 // Define the schema for form validation
 const formSchema = z.object({
-  income: z.number().min(0, { message: "Income must be a positive number." }),
-  familySize: z.number().int().min(1, { message: "Family size must be at least 1." }),
-  legalIssue: z.string().min(10, { message: "Please describe your legal issue in more detail." }).max(200, { message: "Description too long." }),
-  state: z.string().min(2, { message: "Please enter your state abbreviation." }).max(2, { message: "Please enter a valid 2-letter state abbreviation." }).toUpperCase(),
+  income: z.number().min(0, { message: "Income must be a positive number." }).max(999999999, { message: "Income value is too high." }),
+  familySize: z.number().int().min(1, { message: "Family size must be at least 1." }).max(20, { message: "Family size cannot exceed 20." }),
+  legalIssue: z.string().min(10, { message: "Please describe your legal issue in more detail (min 10 characters)." }).max(200, { message: "Description too long (max 200 characters)." }),
+  state: z.string().min(2, { message: "Please enter your state abbreviation (e.g., CA)." }).max(2, { message: "Please enter a valid 2-letter state abbreviation." }).toUpperCase(),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -39,17 +37,16 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
       legalIssue: '',
       state: '',
     },
-    mode: 'onTouched', // Validate on blur or change
+    mode: 'onTouched',
   })
 
   const handleNextStep = async () => {
-    // Validate current step fields before moving to next
     if (step === 1) {
       const isValid = await form.trigger(['income', 'familySize'])
       if (isValid) setStep(2)
     } else if (step === 2) {
       const isValid = await form.trigger(['legalIssue', 'state'])
-      if (isValid) form.handleSubmit(onSubmit)() // If last step, submit the form
+      if (isValid) form.handleSubmit(onSubmit)()
     }
   }
 
@@ -57,7 +54,6 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
     setStep((prev) => prev - 1)
   }
 
-  // Define a wrapper for form field to display errors
   const FormFieldWrapper = ({ name, label, type = "text", placeholder, ...props }: { name: keyof FormValues, label: string, type?: string, placeholder?: string }) => (
     <div className="mb-4">
       <label htmlFor={name} className="block text-sm font-medium text-foreground mb-2">
@@ -69,17 +65,19 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
         {...form.register(name, { valueAsNumber: type === "number" })}
         placeholder={placeholder}
         className={form.formState.errors[name] ? 'border-destructive focus-visible:ring-destructive' : ''}
+        aria-invalid={form.formState.errors[name] ? "true" : "false"}
+        aria-describedby={`${name}-error`}
         {...props}
       />
       {form.formState.errors[name] && (
-        <p className="text-sm text-destructive mt-1">{form.formState.errors[name]?.message}</p>
+        <p id={`${name}-error`} className="text-sm text-destructive mt-1" role="alert">{form.formState.errors[name]?.message}</p>
       )}
     </div>
   )
 
 
   return (
-    <form className="bg-card p-8 rounded-lg shadow-md border">
+    <form className="bg-card p-8 rounded-lg shadow-md border" onSubmit={(e) => e.preventDefault()}>
       <motion.h2
         key={`step-title-${step}`}
         initial={{ opacity: 0, y: -10 }}
@@ -92,7 +90,7 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
       </motion.h2>
 
       <motion.div
-        key={`step-content-${step}`} // Key for Framer Motion to re-render and animate
+        key={`step-content-${step}`}
         initial={{ opacity: 0, x: step === 1 ? 50 : -50 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: step === 1 ? -50 : 50 }}
@@ -126,6 +124,7 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
               name="state"
               label="Your State (e.g., CA for California)"
               placeholder="e.g., NY"
+              maxLength={2}
             />
           </>
         )}
@@ -133,22 +132,22 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
 
       <div className="flex justify-between mt-6">
         {step > 1 && (
-          <Button type="button" variant="outline" onClick={handlePrevStep} disabled={loading}>
+          <Button type="button" variant="outline" onClick={handlePrevStep} disabled={loading} aria-label="Previous step">
             Previous
           </Button>
         )}
         {step < 2 ? (
-          <Button type="button" onClick={handleNextStep} disabled={loading}>
+          <Button type="button" onClick={handleNextStep} disabled={loading} aria-label="Next step">
             Next
           </Button>
         ) : (
-          <Button type="button" onClick={handleNextStep} disabled={loading || !form.formState.isValid}>
+          <Button type="button" onClick={handleNextStep} disabled={loading || !form.formState.isValid} aria-label="Check eligibility">
             {loading ? 'Checking...' : 'Check Eligibility'}
           </Button>
         )}
       </div>
 
-      {error && <p className="mt-4 text-destructive text-sm text-center">{error}</p>}
+      {error && <p className="mt-4 text-destructive text-sm text-center" role="alert">{error}</p>}
 
       {results && !loading && (
         <motion.div
@@ -156,6 +155,8 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mt-8 p-4 bg-accent rounded-lg"
+          role="region"
+          aria-live="polite"
         >
           <h3 className="text-xl font-semibold mb-2">Eligibility Results:</h3>
           <p className="text-accent-foreground">

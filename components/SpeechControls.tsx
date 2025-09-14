@@ -21,7 +21,6 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    // Check for browser support
     const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition
     if (!SpeechRecognition) {
       console.warn('Speech Recognition not supported in this browser.')
@@ -29,8 +28,8 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
     }
 
     const recognition = new SpeechRecognition()
-    recognition.continuous = false // Listen for single phrases
-    recognition.interimResults = false // Only return final results
+    recognition.continuous = false
+    recognition.interimResults = false
     recognition.lang = voiceLanguage
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
@@ -39,7 +38,7 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
         .map((result) => result.transcript)
         .join('')
       onSpeechRecognized(transcript)
-      setIsListening(false) // Stop listening after result
+      setIsListening(false)
     }
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -48,7 +47,7 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
     }
 
     recognition.onend = () => {
-      setIsListening(false) // Ensure button state is updated
+      setIsListening(false)
     }
 
     recognitionRef.current = recognition
@@ -71,13 +70,12 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
     const speak = (text: string) => {
       if (!text.trim()) return
 
-      // Cancel any ongoing speech
       synth.cancel()
 
       const utterance = new SpeechSynthesisUtterance(text)
       utterance.lang = voiceLanguage
-      utterance.rate = 1 // Normal speed
-      utterance.pitch = 1 // Normal pitch
+      utterance.rate = 1
+      utterance.pitch = 1
 
       utterance.onstart = () => setIsSpeaking(true)
       utterance.onend = () => setIsSpeaking(false)
@@ -97,7 +95,7 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
     return () => {
       synth.cancel()
     }
-  }, [textToSpeak, voiceLanguage, isSpeaking]) // Re-run when textToSpeak changes
+  }, [textToSpeak, voiceLanguage, isSpeaking])
 
   const toggleListening = () => {
     if (isListening) {
@@ -119,13 +117,6 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
       window.speechSynthesis.cancel()
       setIsSpeaking(false)
     } else if (textToSpeak) {
-      // Re-trigger the TTS effect by updating the state or directly calling speak
-      // For simplicity, we'll let the useEffect handle it for new `textToSpeak`
-      // Or, if we want to re-speak the *same* textToSpeak, we need a manual trigger.
-      // For now, assume `textToSpeak` changes to trigger it.
-      // A more robust solution might pass a `speakText` function down.
-      // For this example, if textToSpeak is already present, just ensure it plays.
-      // If it's already speaking, the useEffect cleans it up and restarts with the same text.
       if (!window.speechSynthesis.speaking && textToSpeak) {
         const synth = window.speechSynthesis
         const utterance = new SpeechSynthesisUtterance(textToSpeak)
@@ -153,6 +144,7 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
         onClick={toggleListening}
         disabled={typeof window === 'undefined' || !('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)}
         className={cn({ 'bg-primary text-primary-foreground': isListening })}
+        aria-label={isListening ? 'Stop microphone input' : 'Start microphone input'}
       >
         {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
         <span className="sr-only">{isListening ? 'Stop Listening' : 'Start Listening'}</span>
@@ -164,6 +156,7 @@ export function SpeechControls({ onSpeechRecognized, textToSpeak, voiceLanguage 
         onClick={toggleSpeaking}
         disabled={typeof window === 'undefined' || !('speechSynthesis' in window) || !textToSpeak}
         className={cn({ 'bg-primary text-primary-foreground': isSpeaking })}
+        aria-label={isSpeaking ? 'Stop text to speech output' : 'Start text to speech output'}
       >
         {isSpeaking ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
         <span className="sr-only">{isSpeaking ? 'Stop Speaking' : 'Start Speaking'}</span>

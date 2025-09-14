@@ -1,25 +1,21 @@
 import { NextResponse } from 'next/server'
+import { queryRAG } from '@/lib/rag' // Assuming queryRAG is set up to handle LLM calls
 
 export async function POST(request: Request) {
-  const { message } = await request.json()
-  console.log('Received chat message:', message)
+  try {
+    const { message } = await request.json()
+    console.log('Received chat message:', message)
 
-  // Simulate AI response logic
-  let reply = "I'm sorry, I don't have enough information to answer that."
-  if (message.toLowerCase().includes('hello')) {
-    reply = "Hello there! How can I help you with legal finance today?"
-  } else if (message.toLowerCase().includes('supabase')) {
-    reply = "Supabase is a great open-source Firebase alternative for building your backend."
-  } else if (message.toLowerCase().includes('invoice')) {
-    reply = "To manage invoices, you might want to check the 'Dashboard' section for pending and paid invoices."
-  } else if (message.toLowerCase().includes('summary')) {
-    reply = "You can upload documents for summarization on the '/summarize' page."
-  } else if (message.toLowerCase().includes('eligibility')) {
-    reply = "Check the '/schemes' page to use the eligibility wizard for legal aid programs."
+    if (!message || typeof message !== 'string') {
+      return NextResponse.json({ error: 'Invalid message format' }, { status: 400 })
+    }
+
+    // Use RAG pipeline for generating response
+    const aiReply = await queryRAG(message);
+
+    return NextResponse.json({ reply: aiReply })
+  } catch (error) {
+    console.error('Error in chat API:', error)
+    return NextResponse.json({ error: 'Failed to process chat message. Please try again.' }, { status: 500 })
   }
-
-  // Simulate a delay for AI processing
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-
-  return NextResponse.json({ reply })
 }
