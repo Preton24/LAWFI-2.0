@@ -2,8 +2,11 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from '@/app/components/ui/button'
-import { Input } from '@/app/components/ui/input'
+import { Button } from '@/components/ui/button' // Corrected import path for Button
+import { Input } from '@/components/ui/input' // Corrected import path for Input
+import { SpeechControls } from '@/components/SpeechControls' // New: Imported SpeechControls
+import { LoadingSpinner } from '@/components/LoadingSpinner' // New: Imported LoadingSpinner
+import { cn } from '@/lib/utils' // Assuming cn utility is available
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<{ text: string; sender: 'user' | 'ai' }[]>([
@@ -11,34 +14,44 @@ export default function ChatPage() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [currentAiResponse, setCurrentAiResponse] = useState('') // State to pass to TTS
 
-  const handleSendMessage = async () => {
-    if (input.trim() === '') return
+  const handleSendMessage = async (messageText: string) => {
+    if (messageText.trim() === '') return
 
-    const userMessage = { text: input, sender: 'user' as const }
+    const userMessage = { text: messageText, sender: 'user' as const }
     setMessages((prev) => [...prev, userMessage])
-    setInput('')
+    setInput('') // Clear input only if it was typed
     setLoading(true)
+    setCurrentAiResponse('') // Clear previous TTS text
 
     try {
-      // Simulate API call to /api/chat
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: messageText }),
       })
       const data = await response.json()
-      setMessages((prev) => [...prev, { text: data.reply, sender: 'ai' as const }])
+      const aiReply = data.reply
+      setMessages((prev) => [...prev, { text: aiReply, sender: 'ai' as const }])
+      setCurrentAiResponse(aiReply) // Set AI response for TTS
     } catch (error) {
       console.error('Error sending message:', error)
-      setMessages((prev) => [...prev, { text: "Sorry, I couldn't get a response.", sender: 'ai' as const }])
+      const errorReply = "Sorry, I couldn't get a response."
+      setMessages((prev) => [...prev, { text: errorReply, sender: 'ai' as const }])
+      setCurrentAiResponse(errorReply) // Set error response for TTS
     } finally {
       setLoading(false)
     }
   }
 
+  const handleSpeechRecognized = (text: string) => {
+    setInput(text); // Populate input field with speech text
+    handleSendMessage(text); // Immediately send the recognized speech as a message
+  };
+
   return (
-    <div className="container mx-auto p-4 max-w-3xl flex flex-col h-[calc(100vh-64px)]">
+    <div className="container mx-auto p-4 max-w-3xl flex flex-col h-[calc(100vh-64px-40px)]"> {/* Adjusted height for footer */}
       <h1 className="text-3xl font-bold mb-6 text-center">AI Legal Chat Assistant</h1>
 
       <div className="flex-1 border rounded-lg p-4 overflow-y-auto mb-4 bg-muted/20">
@@ -64,26 +77,25 @@ export default function ChatPage() {
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="rounded-lg px-4 py-2 bg-accent text-accent-foreground animate-pulse">
-              Typing...
-            </div>
+            <LoadingSpinner text="AI is typing..." size="sm" />
           </div>
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <Input
           type="text"
           placeholder="Ask a question about legal finance..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(input)}
           className="flex-1"
           disabled={loading}
         />
-        <Button onClick={handleSendMessage} disabled={loading}>
+        <Button onClick={() => handleSendMessage(input)} disabled={loading}>
           Send
         </Button>
+        <SpeechControls onSpeechRecognized={handleSpeechRecognized} textToSpeak={currentAiResponse} />
       </div>
     </div>
   )

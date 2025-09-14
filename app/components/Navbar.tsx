@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/app/lib/utils' // Assuming cn utility is available
+import { cn } from '@/lib/utils' // Corrected path to utils
 
-export function MainNav() {
+export function Navbar() {
   const pathname = usePathname()
 
   const navItems = [

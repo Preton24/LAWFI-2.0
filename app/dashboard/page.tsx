@@ -1,8 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
-import { Button } from '@/app/components/ui/button'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+import { Button } from '@/components/ui/button' // Corrected import path for Button
+import { UpdateCard } from '@/components/UpdateCard' // New: Imported UpdateCard
 
 const data = [
   { name: 'Jan', revenue: 4000, expenses: 2400 },
@@ -20,7 +21,14 @@ const pieData = [
   { name: 'Compliance', value: 300 },
   { name: 'Marketing', value: 200 },
 ];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']; // Example colors for pie chart
+
+const updates = [
+  { title: "New Client Onboarding", description: "Onboarding for 'Smith & Co.' completed successfully.", date: "2023-01-15", link: "#" },
+  { title: "Q3 Financial Report Due", description: "Upcoming deadline for Q3 Financial Report submission.", date: "2023-01-20", link: "#" },
+  { title: "Regulatory Changes Alert", description: "Identified upcoming changes in California tax law.", date: "2023-01-18", link: "#" },
+  { title: "Automated Invoice Sent", description: "Invoice #2023005 sent to 'Alpha Holdings.'", date: "2023-01-14", link: "#" },
+];
 
 
 export default function DashboardPage() {
@@ -131,12 +139,18 @@ export default function DashboardPage() {
         className="bg-card p-6 rounded-lg shadow-md border"
       >
         <h2 className="text-xl font-semibold mb-4">Recent Activity & Updates</h2>
-        <ul className="space-y-3 text-muted-foreground">
-          <li>• New client onboarding for "Smith & Co." completed.</li>
-          <li>• Q3 Financial Report due next week.</li>
-          <li>• Upcoming regulatory changes in California tax law identified.</li>
-          <li>• Automated invoice #2023005 sent to "Alpha Holdings."</li>
-        </ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {updates.map((update, index) => (
+            <UpdateCard
+              key={index}
+              title={update.title}
+              description={update.description}
+              date={update.date}
+              link={update.link}
+              delay={0.1 * index} // Staggered animation
+            />
+          ))}
+        </div>
         <Button className="mt-6">View Full Report</Button>
       </motion.div>
     </div>

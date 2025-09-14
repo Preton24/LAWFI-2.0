@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from '@/app/components/ui/button'
-import { Input } from '@/app/components/ui/input' // Assuming an Input component that can handle file types
+import { Button } from '@/components/ui/button' // Corrected import path for Button
+import { Input } from '@/components/ui/input' // Corrected import path for Input
+import { CitedAnswer } from '@/components/CitedAnswer' // New: Imported CitedAnswer
+import { LoadingSpinner } from '@/components/LoadingSpinner' // New: Imported LoadingSpinner
 
 export default function SummarizePage() {
   const [file, setFile] = useState<File | null>(null)
@@ -78,7 +80,7 @@ export default function SummarizePage() {
             className="flex-1 block w-full text-sm text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
           />
           <Button onClick={handleSubmit} disabled={loading || !file}>
-            {loading ? 'Summarizing...' : 'Summarize'}
+            {loading ? <LoadingSpinner size="sm" /> : 'Summarize'}
           </Button>
         </div>
         {file && <p className="mt-2 text-sm text-muted-foreground">Selected: {file.name}</p>}
@@ -90,10 +92,15 @@ export default function SummarizePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-card p-6 rounded-lg shadow-md border"
         >
-          <h2 className="text-2xl font-semibold mb-4">Summary Results</h2>
-          <p className="whitespace-pre-wrap text-muted-foreground">{summary}</p>
+          {/* Using CitedAnswer component for summary display */}
+          <CitedAnswer
+            answer={summary}
+            citations={[
+              { id: 'doc-source', text: `Source: ${file?.name || 'Uploaded Document'}`, url: '#' }
+            ]}
+            confidence={95} // Example confidence
+          />
         </motion.div>
       )}
     </div>

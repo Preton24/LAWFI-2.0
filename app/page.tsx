@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Button } from '@/app/components/ui/button' // shadcn/ui Button
+import { Button } from '@/components/ui/button' // Corrected import path for Button
 
 export default function HomePage() {
   return (
