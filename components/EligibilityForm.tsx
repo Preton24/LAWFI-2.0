@@ -7,7 +7,7 @@ import * as z from 'zod'
 import { motion } from 'framer-motion'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Input, InputProps } from '@/components/ui/input' // Import InputProps here
 
 // Define the schema for form validation
 const formSchema = z.object({
@@ -24,6 +24,13 @@ interface EligibilityFormProps {
   loading: boolean;
   results: string | null;
   error: string | null;
+}
+
+// Define props for the FormFieldWrapper, extending InputProps
+interface FormFieldWrapperProps extends InputProps {
+  name: keyof FormValues;
+  label: string;
+  // type and placeholder are already covered by InputProps
 }
 
 export function EligibilityForm({ onSubmit, loading, results, error }: EligibilityFormProps) {
@@ -54,20 +61,19 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
     setStep((prev) => prev - 1)
   }
 
-  const FormFieldWrapper = ({ name, label, type = "text", placeholder, ...props }: { name: keyof FormValues, label: string, type?: string, placeholder?: string }) => (
+  // Corrected FormFieldWrapper definition
+  const FormFieldWrapper = ({ name, label, ...props }: FormFieldWrapperProps) => (
     <div className="mb-4">
       <label htmlFor={name} className="block text-sm font-medium text-foreground mb-2">
         {label}
       </label>
       <Input
         id={name}
-        type={type}
-        {...form.register(name, { valueAsNumber: type === "number" })}
-        placeholder={placeholder}
+        {...form.register(name, { valueAsNumber: props.type === "number" })} // Use props.type for valueAsNumber
         className={form.formState.errors[name] ? 'border-destructive focus-visible:ring-destructive' : ''}
         aria-invalid={form.formState.errors[name] ? "true" : "false"}
         aria-describedby={`${name}-error`}
-        {...props}
+        {...props} // Pass all remaining props, including maxLength, to the Input
       />
       {form.formState.errors[name] && (
         <p id={`${name}-error`} className="text-sm text-destructive mt-1" role="alert">{form.formState.errors[name]?.message}</p>
@@ -124,7 +130,7 @@ export function EligibilityForm({ onSubmit, loading, results, error }: Eligibili
               name="state"
               label="Your State (e.g., CA for California)"
               placeholder="e.g., NY"
-              maxLength={2}
+              maxLength={2} // Now maxLength will be correctly passed
             />
           </>
         )}
