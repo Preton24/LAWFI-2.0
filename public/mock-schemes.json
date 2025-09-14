@@ -1,0 +1,57 @@
+[
+  {
+    "id": "s1a2b3c4-d5e6-4f78-90b1-2345678901de",
+    "title": "Low-Income Legal Aid Program",
+    "description": "Provides free or low-cost legal services for civil cases to individuals and families below a certain income threshold.",
+    "eligibility_criteria": "Annual household income must be below 125% of the federal poverty line. Must be a U.S. citizen or legal resident. Case must be a civil matter (e.g., family law, housing, employment). Priority given to vulnerable populations.",
+    "benefits_description": "Includes legal representation, advice, and mediation services. Covers court fees and expert witness costs in approved cases. Access to a network of pro-bono attorneys.",
+    "application_link": "https://www.lawfi-legalaid.org/apply",
+    "target_group": "Low-income individuals and families",
+    "created_at": "2023-01-01T08:00:00Z",
+    "updated_at": "2023-01-01T08:00:00Z"
+  },
+  {
+    "id": "s2b3c4d5-e6f7-4g89-01c2-345678901efg",
+    "title": "Small Business Resilience Grant",
+    "description": "Financial assistance for small businesses impacted by economic downturns or natural disasters, to help cover legal and operational costs.",
+    "eligibility_criteria": "Must be a registered small business (under 50 employees) operating for at least 3 years. Must demonstrate a minimum 25% revenue loss in the last fiscal year. Legal costs must be related to business recovery or dispute resolution.",
+    "benefits_description": "Grants up to $20,000 for legal fees, contract restructuring, and business consulting. Also covers up to 50% of eligible operational expenses for 3 months.",
+    "application_link": "https://www.lawfi-businessgrants.com/apply",
+    "target_group": "Small and Medium-sized Enterprises (SMEs)",
+    "created_at": "2023-03-15T11:30:00Z",
+    "updated_at": "2023-03-15T11:30:00Z"
+  },
+  {
+    "id": "s3c4d5e6-f7g8-9h01-23d4-5678901ghij",
+    "title": "Environmental Litigation Support Fund",
+    "description": "A fund to support non-profit organizations and community groups engaged in environmental protection litigation.",
+    "eligibility_criteria": "Applicant must be a registered non-profit organization or recognized community group. Litigation must address significant environmental harm or advocate for environmental policy change. Must have a clear legal strategy and demonstrate financial need.",
+    "benefits_description": "Provides grants to cover legal fees, expert testimony costs, and scientific research expenses directly related to environmental lawsuits. Maximum grant amount of $50,000 per case.",
+    "application_link": "https://www.lawfi-environmental.org/fund",
+    "target_group": "Environmental advocacy groups",
+    "created_at": "2023-05-01T09:00:00Z",
+    "updated_at": "2023-05-01T09:00:00Z"
+  },
+  {
+    "id": "s4d5e6f7-g8h9-0i12-34e5-678901ijklm",
+    "title": "Veteran's Legal Assistance Initiative",
+    "description": "Offers specialized legal aid for veterans, covering issues such as benefits claims, housing, and family law matters.",
+    "eligibility_criteria": "Must be a U.S. military veteran with honorable discharge. Income and asset limits apply (based on VA guidelines). Legal issue must fall within approved categories for veteran support.",
+    "benefits_description": "Free legal consultations and representation for VA benefit appeals, discharge upgrades, and housing disputes. Assistance with family law cases (e.g., divorce, child custody) where a veteran is involved.",
+    "application_link": "https://www.lawfi-veterans.org/support",
+    "target_group": "Military Veterans",
+    "created_at": "2023-07-20T14:00:00Z",
+    "updated_at": "2023-07-20T14:00:00Z"
+  },
+  {
+    "id": "s5e6f7g8-h9i0-1j23-45f6-78901jklmn",
+    "title": "Consumer Debt Relief Program",
+    "description": "Provides legal guidance and negotiation services for individuals struggling with overwhelming consumer debt.",
+    "eligibility_criteria": "Total unsecured debt must exceed $10,000. Must demonstrate inability to pay minimums for 3 consecutive months. Not available for secured debts like mortgages or car loans. Must undergo mandatory financial counseling.",
+    "benefits_description": "Legal assistance with debt negotiation, settlement agreements, and bankruptcy filing if necessary. Protection from aggressive collection practices. Financial literacy workshops.",
+    "application_link": "https://www.lawfi-debtrelief.com/program",
+    "target_group": "Individuals with high consumer debt",
+    "created_at": "2023-09-01T10:00:00Z",
+    "updated_at": "2023-09-01T10:00:00Z"
+  }
+]

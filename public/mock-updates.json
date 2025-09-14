@@ -1,0 +1,23 @@
+[
+  {
+    "id": "u1a2b3c4-d5e6-4f78-90b1-2345678901fg",
+    "title": "New Federal Guidelines on AI Ethics in Legal Practice",
+    "content": "The Department of Justice has released new guidelines on the ethical use of Artificial Intelligence in legal research and case management. Firms are advised to ensure transparency, accountability, and guard against algorithmic bias. LAW-FI is fully compliant with these new standards, and updates to our AI models are already in place to reflect the latest recommendations. Read our whitepaper on responsible AI for more details.",
+    "published_at": "2024-01-20T10:00:00Z",
+    "author_id": null
+  },
+  {
+    "id": "u2b3c4d5-e6f7-4g89-01c2-345678901hij",
+    "title": "Q4 2023 Financial Performance Report Available",
+    "content": "Our comprehensive Q4 2023 financial performance report is now available on the dashboard. It includes key metrics on revenue growth, expense analysis, and client acquisition rates. Benchmarking against industry averages shows LAW-FI clients consistently outperform in operational efficiency. We encourage all users to review the report and utilize the enhanced visualization tools.",
+    "published_at": "2024-01-25T14:30:00Z",
+    "author_id": null
+  },
+  {
+    "id": "u3c4d5e6-f7g8-9h01-23d4-5678901klmn",
+    "title": "Upcoming Webinar: Navigating New Tax Laws for 2024",
+    "content": "Join our expert panel for a free webinar on February 10, 2024, to understand the significant changes in federal and state tax laws effective this year. Topics will include new deductions, compliance updates, and strategies for optimizing your firm's tax position. Registration is now open on the 'Events' section of your dashboard.",
+    "published_at": "2024-01-28T09:00:00Z",
+    "author_id": null
+  }
+]
